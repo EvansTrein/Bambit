@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("./assets/fonts/Montserrat-Medium.eot");
+  src: url("./assets/fonts/Montserrat-Medium.woff2") format("woff2"),
+    url("./assets/fonts/Montserrat-Medium.woff") format("woff"),
+    url("./assets/fonts/Montserrat-Medium.ttf") format("truetype");
+  font-style: normal;
+  font-display: auto;
+}
+
+:root {
+  --fontSizeMain: 20px;
+	--colorIndex1: rgb(60, 120, 160);
+	--colorIndex2: rgb(158, 53, 118);
+	--backgroundColorMain: linear-gradient(var(--colorIndex1),var(--colorIndex2));
+}
+
+body {
+  font-family: "Montserrat";
+  font-size: var(--fontSizeMain);
+	background-image: var(--backgroundColorMain);
+	background-repeat: no-repeat;
+}
+
+.scrollbar-thin {
+	scrollbar-width: thin;
+	scrollbar-color: rgba(0, 0, 0, 0.5) transparent; 
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+	width: 8px; 
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+	background: transparent; 
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+	background-color: rgba(0, 0, 0, 0.5); 
+	border-radius: 10px;
+}
