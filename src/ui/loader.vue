@@ -1,40 +1,46 @@
 <template>
-	<span class="loader">L &nbsp; ading</span>
+  <span class="loader"></span>
 </template>
 
-<script setup lang="ts">
-
-</script>
+<script setup lang="ts"></script>
 
 <style scoped>
 .loader {
-  display: inline-block;
-  font-size: 48px;
-  font-family: Arial, Helvetica, sans-serif;
-  font-weight: bold;
-  color: #FFF;
   position: relative;
+  width: 15px;
+  height: 64px;
 }
+.loader::after,
 .loader::before {
-  content: '';  
+  content: "";
   position: absolute;
-  left: 34px;
-  bottom: 8px;
-  width: 30px;
-  height: 30px;
+  left: 0;
+  top: 0;
+  color: #d5f0f0;
+  background: currentColor;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  border: 5px solid #FFF;
-  border-bottom-color: #32a2d6;
-  box-sizing: border-box;
-  animation: rotation 0.6s linear infinite;
+  box-shadow: 45px 0, -45px 0;
+  animation: move 0.5s linear infinite alternate;
 }
 
-@keyframes rotation {
+.loader::before {
+  top: 100%;
+  box-shadow: 50px 0;
+  left: -25px;
+  animation-direction: alternate-reverse;
+}
+
+@keyframes move {
   0% {
-    transform: rotate(0deg);
+    top: 0;
+  }
+  50% {
+    top: 50%;
   }
   100% {
-    transform: rotate(360deg);
+    top: 100%;
   }
-} 
+}
 </style>

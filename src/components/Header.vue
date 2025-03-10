@@ -60,7 +60,7 @@ const handleSearch = () => {
 const clearSearch = () => {
   searchQuery.value = "";
   albumStore.clearAlbums();
-  albumStore.fetchAlbums(30);
+  albumStore.initAlbums(30);
 };
 </script>
 

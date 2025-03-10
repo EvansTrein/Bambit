@@ -12,15 +12,18 @@ export interface Album {
 
 export class ApiService {
   private readonly axiosInstance: AxiosInstance;
+  private offset: number;
 
   constructor() {
     this.axiosInstance = axios.create({
       baseURL: BASE_URL,
     });
+    this.offset = 0;
   }
 
-  async getPhotos(limit: number): Promise<Album[]> {
-		// await new Promise(resolve => setTimeout(resolve, 2000));
+  async initPhotos(limit: number): Promise<Album[]> {
+    this.offset = limit;
+    // await new Promise(resolve => setTimeout(resolve, 2000));
 
     const response = await this.axiosInstance.get<Album[]>("/photos", {
       params: {
@@ -38,6 +41,21 @@ export class ApiService {
     const response = await this.axiosInstance.get<Album[]>("/photos", {
       params: params,
     });
+    return response.data;
+  }
+
+  async dynamicUpload(limit: number): Promise<Album[]> {
+    const response = await this.axiosInstance.get<Album[]>("/photos", {
+      params: {
+        _start: this.offset,
+        _limit: limit,
+      },
+    });
+
+    if (response.status == 200) {
+      this.offset += limit;
+    }
+
     return response.data;
   }
 }
