@@ -1,12 +1,52 @@
 <template>
   <main class="max-w-[600px] max-h-[600px] mx-auto flex flex-col">
     <!-- Header -->
-    <div class="flex font-bold text-lg">
-      <div class="w-1/15 mr-1.5 text-center">ID</div>
-      <div class="w-1/15 text-center">AID</div>
-      <div class="w-1/2"><p @click="test($event)" class="cursor-pointer w-fit mx-auto">Title</p></div>
-      <div class="w-1/2 text-center">URL</div>
-      <div class="w-1/2 text-center">Thumbnail URL</div>
+    <div class="flex font-bold text-lg pb-2">
+      <div class="w-1/15">
+        <p
+          @click="sortered(tableHeader.id)"
+          class="pl-1 pr-1 cursor-pointer w-fit mx-auto rounded-lg duration-300 hover:text-(--colorIndex2) bg-transparen"
+          :class="{ 'text-(--colorIndex2) bg-white/50 hover:bg-red': tableHeader.id.activeSort }"
+        >
+          {{ tableHeader.id.name }}
+        </p>
+      </div>
+      <div class="w-1/15 ml-1">
+        <p
+          @click="sortered(tableHeader.albumId)"
+          class="pl-1 pr-1 cursor-pointer w-fit mx-auto rounded-lg duration-300 hover:text-(--colorIndex2) bg-transparen"
+          :class="{ 'text-(--colorIndex2) bg-white/50 hover:bg-red': tableHeader.albumId.activeSort }"
+        >
+          {{ tableHeader.albumId.name }}
+        </p>
+      </div>
+      <div class="w-1/2">
+        <p
+          @click="sortered(tableHeader.title)"
+          class="-translate-x-2 pl-1 pr-1 cursor-pointer w-fit mx-auto rounded-lg duration-300 hover:text-(--colorIndex2) bg-transparen"
+          :class="{ 'text-(--colorIndex2) bg-white/50 hover:bg-red': tableHeader.title.activeSort }"
+        >
+          {{ tableHeader.title.name }}
+        </p>
+      </div>
+      <div class="w-1/2">
+        <p
+          @click="sortered(tableHeader.url)"
+          class="-translate-x-3 pl-1 pr-1 cursor-pointer w-fit mx-auto rounded-lg duration-300 hover:text-(--colorIndex2) bg-transparen"
+          :class="{ 'text-(--colorIndex2) bg-white/50 hover:bg-red': tableHeader.url.activeSort }"
+        >
+          {{ tableHeader.url.name }}
+        </p>
+      </div>
+      <div class="w-1/2">
+        <p
+          @click="sortered(tableHeader.thumbnailUrl)"
+          class="-translate-x-2 pl-1 pr-1 cursor-pointer w-fit mx-auto rounded-lg duration-300 hover:text-(--colorIndex2) bg-transparen"
+          :class="{ 'text-(--colorIndex2) bg-white/50 hover:bg-red': tableHeader.thumbnailUrl.activeSort }"
+        >
+          {{ tableHeader.thumbnailUrl.name }}
+        </p>
+      </div>
     </div>
 
     <loader class="mx-auto top-15" v-if="albumStore.isLoading" />
@@ -20,8 +60,8 @@
       >
         <!-- Short version -->
         <div v-if="openAlbumId !== album.id" class="flex gap-x-2" @click="toggleAlbum(album.id)">
-          <div class="w-1/15 mr-1.5">{{ album.id }}</div>
-          <div class="w-1/15">{{ album.albumId }}</div>
+          <div class="w-1/15 ml-1.5">{{ album.id }}</div>
+          <div class="w-1/15 ml-1 mr-1">{{ album.albumId }}</div>
           <div class="w-1/2 truncate" :title="album.title">{{ album.title }}</div>
           <div class="w-1/2 truncate" :title="album.url">{{ album.url }}</div>
           <div class="w-1/2 truncate" :title="album.thumbnailUrl">{{ album.thumbnailUrl }}</div>
@@ -64,20 +104,25 @@
           </div>
         </div>
       </div>
-
-      <!-- Intersection Observer -->
-      <div ref="observerTarget" class="h-1"></div>
     </div>
   </main>
 </template>
 
 <script setup lang="ts">
-import loader from "../ui/loader.vue";
-import { onMounted, ref, onUnmounted } from "vue";
+import loader from "@/ui/loader.vue";
+import { type Album } from "./../services/api";
+import { sortAlbums } from "./../utils/utils";
+import { onMounted, ref, onUnmounted, reactive } from "vue";
 import { useAlbumStore } from "./../store/store";
 import { storeToRefs } from "pinia";
 
-// const tableHeader: string[] = ["ID", "Album ID", "Title", "URL", "Thumbnail URL"];
+const tableHeader = reactive({
+  id: { name: "ID", pole: "id" as keyof Album, activeSort: false },
+  albumId: { name: "AID", pole: "albumId" as keyof Album, activeSort: false },
+  title: { name: "Title", pole: "title" as keyof Album, activeSort: false },
+  url: { name: "URL", pole: "url" as keyof Album, activeSort: false },
+  thumbnailUrl: { name: "Thumbnail URL", pole: "thumbnailUrl" as keyof Album, activeSort: false },
+});
 
 const scrollContainer = ref<HTMLElement | null>(null);
 
@@ -87,6 +132,27 @@ const openAlbumId = ref<number | null>(null);
 
 const toggleAlbum = (id: number) => {
   openAlbumId.value = openAlbumId.value === id ? null : id;
+};
+
+const sortered = (header: { pole: keyof Album; activeSort: boolean }) => {
+  // Switch the sorting state for the current header
+  header.activeSort = !header.activeSort;
+
+  // Reset the sorting state for all other headers
+  Object.values(tableHeader).forEach((h) => {
+    if (h !== header) {
+      h.activeSort = false;
+    }
+  });
+
+  if (header.activeSort) {
+    // First click: sort by selected field
+    // false = from greater to lesser for numbers and alphabetically (value is inverted inside sortAlbums) true for strings
+    sortAlbums(albumStore.albums, header.pole, false);
+  } else {
+    // Second click: default sorting by “id” from smallest to largest
+    sortAlbums(albumStore.albums, "id" as keyof Album, true); // true = from less to more
+  }
 };
 
 onMounted(() => {
@@ -110,13 +176,6 @@ const handleScroll = () => {
     }
   }
 };
-
-const test = (event: Event) => {
-	const target = event.target as HTMLElement;
-  console.log("Clicked element:", target);
-
-	target.classList.toggle("bg-white")
-}
 </script>
 
 <style scoped></style>

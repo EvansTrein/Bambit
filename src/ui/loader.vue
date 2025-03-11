@@ -16,7 +16,7 @@
   position: absolute;
   left: 0;
   top: 0;
-  color: #d5f0f0;
+  color: var(--colorIndex3);
   background: currentColor;
   width: 16px;
   height: 16px;

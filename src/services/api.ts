@@ -23,7 +23,8 @@ export class ApiService {
 
   async initPhotos(limit: number): Promise<Album[]> {
     this.offset = limit;
-    // await new Promise(resolve => setTimeout(resolve, 2000));
+    // artificial delay for displaying the loading animation
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     const response = await this.axiosInstance.get<Album[]>("/photos", {
       params: {
@@ -34,6 +35,7 @@ export class ApiService {
   }
 
   async getPhotosByIds(ids: number[]): Promise<Album[]> {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     // url query - albumId=1&albumId=2&albumId=3
     const params = new URLSearchParams();
     ids.forEach((id) => params.append("albumId", id.toString()));

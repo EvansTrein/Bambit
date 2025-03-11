@@ -14,7 +14,18 @@
   --fontSizeMain: 20px;
   --colorIndex1: rgb(60, 120, 160);
   --colorIndex2: rgb(158, 53, 118);
+  --colorIndex3: rgb(224, 224, 224);
   --backgroundColorMain: linear-gradient(var(--colorIndex1), var(--colorIndex2));
+	color: black;
+}
+
+/* Dark theme */
+.dark {
+	--colorIndex1: rgb(95, 31, 71);
+  --colorIndex2: rgb(20, 20, 20);
+	--colorIndex3: rgb(0, 0, 0);
+  --backgroundColorMain: linear-gradient(var(--colorIndex1), var(--colorIndex2));
+	color: rgb(201, 201, 201);
 }
 
 body {

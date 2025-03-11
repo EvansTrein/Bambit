@@ -1,12 +1,12 @@
 <template>
-  <header class="flex justify-center p-3 gap-2">
+  <header class="flex justify-center items-center p-3 gap-2">
     <span class="bg-white/20 pl-2 pr-2 rounded-3xl max-w-max text-center">total: {{ count }}</span>
     <div class="flex justify-center items-center max-w-max bg-white/20 rounded-3xl gap-2 flex-grow">
       <span>search:</span>
       <input
         v-model="searchQuery"
         required
-        class="w-2/4 border-b outline-none focus:border-white"
+        class="w-2/4 border-b outline-none focus:border-(--colorIndex3)"
         type="text"
         placeholder="id album/s"
       />
@@ -23,13 +23,15 @@
     >
       clear
     </button>
+		<Toggle @themeChanged="onThemeChanged" />
 
     <Modal :message="modalMessage" :isVisible="isModalVisible" @close="isModalVisible = false" />
   </header>
 </template>
 
 <script setup lang="ts">
-import Modal from "./../ui/modal.vue";
+import Modal from "@/ui/modal.vue";
+import Toggle from "@/ui/toggle.vue";
 import { computed, ref } from "vue";
 import { useAlbumStore } from "./../store/store";
 import { storeToRefs } from "pinia";
@@ -44,8 +46,19 @@ const searchQuery = ref("");
 const count = computed(() => albums.value.length);
 
 const handleSearch = () => {
-  if (!searchQuery.value.trim()) {
+  // Remove the extra spaces
+  const trimmedQuery = searchQuery.value.trim();
+
+  if (!trimmedQuery) {
     modalMessage.value = "The input field is blank. Enter the album IDs.";
+    isModalVisible.value = true;
+    return;
+  }
+
+  const isValidInput = /^[0-9\s]+$/.test(trimmedQuery);
+
+  if (!isValidInput) {
+    modalMessage.value = "Invalid input. Only numbers and spaces are allowed.";
     isModalVisible.value = true;
     return;
   }
@@ -55,6 +68,10 @@ const handleSearch = () => {
     .map((id) => parseInt(id.trim()))
     .filter((id) => !isNaN(id));
   albumStore.searchAlbumsByIds(ids);
+};
+
+const onThemeChanged = (theme: string) => {
+  console.log(`Theme changed to: ${theme}`);
 };
 
 const clearSearch = () => {

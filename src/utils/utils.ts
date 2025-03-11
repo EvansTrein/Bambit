@@ -1,11 +1,45 @@
+export const sortAlbums = <T extends object>(albums: T[], key: keyof T, ascending: boolean): T[] => {
+  if (!albums.length || !(key in albums[0])) {
+    console.error(`Invalid key: ${String(key)}`);
+    return albums;
+  }
+
+  return albums.sort((a, b) => {
+    const valueA = a[key];
+    const valueB = b[key];
+
+    if (key === "id") {
+      const numA = Number(valueA);
+      const numB = Number(valueB);
+
+      if (!isNaN(numA) && !isNaN(numB)) {
+        return ascending ? numA - numB : numB - numA;
+      } else {
+        console.error("Error: valueA or valueB cannot be converted to numbers");
+        return 0;
+      }
+    }
+
+    if (typeof valueA === "number" && typeof valueB === "number") {
+      return ascending ? valueA - valueB : valueB - valueA;
+    }
+
+    if (typeof valueA === "string" && typeof valueB === "string") {
+      return !ascending ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
+    }
+
+    return 0;
+  });
+};
+
 export class IntersectionObserverHelper {
   private observer: IntersectionObserver | null = null;
   private targetElement: HTMLElement | null = null;
 
   constructor(
     private root: HTMLElement | null = null,
-    private threshold: number, // Порог видимости 
-    private onIntersect: () => void // Колбэк при пересечении
+    private threshold: number, // Visibility threshold
+    private onIntersect: () => void // Colback at the crossing
   ) {}
 
   // Начать наблюдение за элементом
@@ -21,20 +55,20 @@ export class IntersectionObserverHelper {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            this.onIntersect(); // Вызываем колбэк
+            this.onIntersect(); // Calling a colback
           }
         });
       },
       {
-        root: this.root, // Элемент, внутри которого происходит прокрутка
-        threshold: this.threshold, // Порог видимости
+        root: this.root, // The element within which scrolling takes place
+        threshold: this.threshold, // Visibility threshold
       }
     );
 
     this.observer.observe(target);
   }
 
-  // Остановить наблюдение
+  // Stop the surveillance
   public disconnect(): void {
     if (this.observer && this.targetElement) {
       this.observer.unobserve(this.targetElement);
@@ -44,18 +78,16 @@ export class IntersectionObserverHelper {
   }
 }
 
+// usage
 
-// использование 
-
-// !!!!!! добавляется на то место за которым будем следить и у которого РАСТЕТ высота
+// !!!!!! is added to the place we are going to monitor and whose height is increasing.
 // <div ref="scrollContainer" class="overflow-y-auto scrollbar-thin flex flex-col gap-3">
 
-// !!!!!! добавляется в САМОМ НИЗУ отслеживаемого элемента
+// !!!!!! is added at the LOWEST point of the tracked item
 // <!-- Intersection Observer -->
 // <div ref="observerTarget" class="h-1"></div>
 
-
-// !!!!!! использование в <script>
+// !!!!!! use in <script>
 // const scrollContainer = ref<HTMLElement | null>(null);
 // const observerTarget = ref<HTMLElement | null>(null);
 // let observerHelper: IntersectionObserverHelper | null = null;
