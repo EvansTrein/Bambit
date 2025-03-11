@@ -13,3 +13,7 @@ You can download the `dist` folder and run it locally. For example [Live Server 
 - Open the dist folder in VS Code.
 - Right-click on the index.html file and select `"Open with Live Server"`.
 - The browser will automatically open with the application.
+
+![theme-light](https://raw.githubusercontent.com/EvansTrein/Bambit/refs/heads/main/public/sample-light.png)
+
+![theme-gark](https://raw.githubusercontent.com/EvansTrein/Bambit/refs/heads/main/public/sample-dark.png)
