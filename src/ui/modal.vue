@@ -8,7 +8,7 @@
       <h2 class="text-xl font-bold">Error!</h2>
       <p class="mt-2">{{ props.message }}</p>
       <button @click="close" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 animate-pulse">
-        Закрыть
+        Close
       </button>
     </div>
   </div>
